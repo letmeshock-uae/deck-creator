@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import dynamic from "next/dynamic";
 import "easymde/dist/easymde.min.css";
 
@@ -139,12 +139,12 @@ export default function Editor({ initialContent, initialBgImage, initialBgColor,
             <div className="flex-1 overflow-auto">
                 <SimpleMdeReact
                     value={content}
-                    onChange={setContent}
-                    options={{
+                    onChange={useCallback((value: string) => setContent(value), [])}
+                    options={useMemo(() => ({
                         spellChecker: false,
                         status: false,
                         autosave: { enabled: false, uniqueId: "axion-editor" },
-                    }}
+                    }), [])}
                 />
             </div>
             <div className="p-4 bg-white/5 border-t border-white/10 flex justify-end">
