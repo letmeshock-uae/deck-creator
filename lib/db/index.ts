@@ -1,8 +1,6 @@
-import { drizzle } from 'drizzle-orm/better-sqlite3';
-import Database from 'better-sqlite3';
+import { drizzle } from 'drizzle-orm/vercel-postgres';
+import { sql } from '@vercel/postgres';
 import * as schema from './schema';
-import path from "path";
 
-// Always use a specific path so it survives hot reloads in dev
-const sqlite = new Database(path.join(process.cwd(), 'sqlite.db'));
-export const db = drizzle(sqlite, { schema });
+// Use the Vercel Postgres client connected via POSTGRES_URL
+export const db = drizzle(sql, { schema });

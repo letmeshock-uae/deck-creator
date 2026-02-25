@@ -46,7 +46,7 @@ export async function PUT(request: Request) {
             .where(eq(slides.id, id));
 
         // Fetch it back to return the updated record
-        const updated = await db.select().from(slides).where(eq(slides.id, id)).get();
+        const [updated] = await db.select().from(slides).where(eq(slides.id, id));
         return NextResponse.json(updated);
     } catch (error) {
         console.error("PUT slide error", error);
