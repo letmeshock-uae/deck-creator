@@ -21,6 +21,31 @@ export default function Editor({ initialContent, initialBgImage, initialBgColor,
     const [bgImage, setBgImage] = useState(initialBgImage);
     const [bgColor, setBgColor] = useState(initialBgColor || "#000000");
     const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
+    const [isUploading, setIsUploading] = useState(false);
+
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setIsUploading(true);
+        try {
+            const response = await fetch(`/api/upload?filename=${encodeURIComponent(file.name)}`, {
+                method: "POST",
+                body: file,
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setBgImage(data.url);
+            } else {
+                alert("Upload failed. Make sure Vercel Blob is configured correctly.");
+            }
+        } catch (error) {
+            console.error("Upload error:", error);
+            alert("Upload failed.");
+        } finally {
+            setIsUploading(false);
+        }
+    };
 
     const handleSave = async () => {
         setSaveStatus("saving");
@@ -75,13 +100,26 @@ export default function Editor({ initialContent, initialBgImage, initialBgColor,
             {/* Slide Settings Header */}
             <div className="p-4 border-b border-white/10 bg-white/5 flex gap-6 items-center flex-wrap">
                 <div className="flex-1 min-w-[200px]">
-                    <label className="block text-xs text-white/50 mb-1 uppercase tracking-wider font-semibold">Background Image URL</label>
+                    <div className="flex items-center justify-between mb-1">
+                        <label className="text-xs text-white/50 uppercase tracking-wider font-semibold">Background Image URL</label>
+                        <label className="text-xs bg-white text-black px-2 py-0.5 rounded cursor-pointer hover:bg-white/80 transition-colors font-medium">
+                            {isUploading ? "Uploading..." : "Upload File"}
+                            <input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={handleFileUpload}
+                                disabled={isUploading}
+                            />
+                        </label>
+                    </div>
                     <input
                         type="text"
                         value={bgImage}
                         onChange={(e) => setBgImage(e.target.value)}
                         placeholder="https://example.com/image.jpg"
                         className="w-full bg-black/50 border border-white/10 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:border-white/30 transition-colors"
+                        disabled={isUploading}
                     />
                 </div>
                 <div>
