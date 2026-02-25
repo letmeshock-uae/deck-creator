@@ -42,7 +42,14 @@ export async function PUT(request: Request) {
         const { id, ...updateData } = body;
 
         await db.update(slides)
-            .set(updateData)
+            .set({
+                title: body.title,
+                contentMarkdown: body.contentMarkdown,
+                backgroundImageUrl: body.backgroundImageUrl,
+                backgroundColor: body.backgroundColor,
+                orderIndex: body.orderIndex,
+                isActive: body.isActive,
+            })
             .where(eq(slides.id, id));
 
         // Fetch it back to return the updated record
