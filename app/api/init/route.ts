@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { sql } from "@vercel/postgres";
+import { neon } from '@neondatabase/serverless';
 
 export async function GET() {
     try {
+        const sql = neon(process.env.POSTGRES_URL || 'postgres://postgres:postgres@localhost:5432/postgres');
         await sql`
             CREATE TABLE IF NOT EXISTS "settings" (
                 "id" text PRIMARY KEY NOT NULL,
