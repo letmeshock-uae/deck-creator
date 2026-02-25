@@ -1,0 +1,18 @@
+erDiagram
+    SETTINGS {
+        string id PK
+        string logo_url
+        string admin_password_hash
+        datetime updated_at
+    }
+    SLIDES {
+        uuid id PK
+        string title
+        text content_markdown
+        string background_image_url
+        int order_index
+        boolean is_active
+        datetime created_at
+    }
+    
+    SETTINGS ||--o{ SLIDES : "defines presentation context"
